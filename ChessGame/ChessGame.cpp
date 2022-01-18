@@ -1,34 +1,52 @@
-﻿#include <iostream>
+﻿/**
+*
+* Solution to course project # 4
+* Introduction to programming course
+* Faculty of Mathematics and Informatics of Sofia University
+* Winter semester 2021/2022
+*
+* @author Stoyan Zlatev
+* @idnumber 4MI0600043
+* @compiler VC
+*
+* <file with simple chess game>
+*
+*/
+
+#include <iostream>
 #include <random>
 #include <cmath>
+#include <chrono>
+#include <thread>
 
-using namespace std;
+using namespace std::this_thread;
+using namespace std::chrono;
 
 void printMenu()
 {
-	cout << "Start new game - Press 1" << endl;
-	cout << "Change board size - Press 2" << endl;
-	cout << "Exit - Press 3" << endl;
-	cout << "Enter command: ";
+	std::cout << "Start new game - Press 1" << std::endl;
+	std::cout << "Change board size - Press 2" << std::endl;
+	std::cout << "Exit - Press 3" << std::endl;
+	std::cout << "Enter command: ";
 }
 
 void generatePositions(int* positions, unsigned size)
 {
-	random_device rd;
-	mt19937 gen(rd());
-	uniform_int_distribution<> distr(0, size - 1);
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> distr(0, size - 1);
 	positions[0] = distr(gen);
 	positions[1] = distr(gen);
 }
 
 void createEmptyBoard(char** board, unsigned size)
 {
-	for (unsigned i = 0; i < size; ++i)
+	for (unsigned row = 0; row < size; row++)
 	{
-		board[i] = new char[size];
-		for (unsigned j = 0; j < size; j++)
+		board[row] = new char[size];
+		for (unsigned column = 0; column < size; column++)
 		{
-			board[i][j] = '-';
+			board[row][column] = '-';
 		}
 	}
 }
@@ -36,14 +54,14 @@ void createEmptyBoard(char** board, unsigned size)
 void findSymbolPosition(char** board, char symbol, unsigned size, int* position)
 {
 	bool found = false;
-	for (unsigned i = 0; i < size; i++)
+	for (unsigned row = 0; row < size; row++)
 	{
-		for (unsigned j = 0; j < size; j++)
+		for (unsigned column = 0; column < size; column++)
 		{
-			if (board[i][j] == symbol)
+			if (board[row][column] == symbol)
 			{
-				position[0] = i;
-				position[1] = j;
+				position[0] = row;
+				position[1] = column;
 				return;
 			}
 		}
@@ -129,9 +147,9 @@ bool kingTrap(char** board, unsigned row, unsigned column, unsigned size, char k
 
 bool topRowTrap(char** board, unsigned row, unsigned column, unsigned size)
 {
-	for (unsigned i = 0; i < size; i++)
+	for (unsigned currentColumn = 0; currentColumn < size; currentColumn++)
 	{
-		if (i != column && (board[row][i] == '1' || board[row][i] == '2'))
+		if (currentColumn != column && (board[row][currentColumn] == '1' || board[row][currentColumn] == '2'))
 		{
 			return true;
 		}
@@ -141,9 +159,9 @@ bool topRowTrap(char** board, unsigned row, unsigned column, unsigned size)
 
 bool topColumnTrap(char** board, unsigned row, unsigned column, unsigned size)
 {
-	for (unsigned i = 0; i < size; i++)
+	for (unsigned currentRow = 0; currentRow < size; currentRow++)
 	{
-		if (i != row && (board[i][column] == '1' || board[i][column] == '2'))
+		if (currentRow != row && (board[currentRow][column] == '1' || board[currentRow][column] == '2'))
 		{
 			return true;
 		}
@@ -232,7 +250,8 @@ bool possibleComputerKingMoves(char** board, unsigned row, unsigned column, unsi
 bool isCheckMate(char** board, unsigned size)
 {
 	const char computerKing = 'K';
-	int kingPosition[2];
+	const unsigned arraySize = 2;
+	int kingPosition[arraySize];
 	findSymbolPosition(board, computerKing, size, kingPosition);
 	int kingRow = kingPosition[0];
 	int kingColumn = kingPosition[1];
@@ -246,49 +265,51 @@ bool isCheckMate(char** board, unsigned size)
 
 void placeFigures(char** board, unsigned size, const char* symbols)
 {
-	createEmptyBoard(board, size);
-	int positions[2];
-	for (unsigned i = 0; i < 4; i++)
+	createEmptyBoard(board, size); 
+	const unsigned arraySize = 2;
+	int positions[arraySize];
+	const unsigned symbolsCount = 4;
+	for (unsigned symbolIndex = 0; symbolIndex < symbolsCount; symbolIndex++)
 	{
 		generatePositions(positions, size);
-		while (board[positions[0]][positions[1]] != '-' || (i == 1 && kingTrap(board, positions[0], positions[1], size, 'P')))
+		while (board[positions[0]][positions[1]] != '-' || (symbolIndex == 1 && kingTrap(board, positions[0], positions[1], size, 'P')))
 		{
 			generatePositions(positions, size);
 		}
-		board[positions[0]][positions[1]] = symbols[i];
+		board[positions[0]][positions[1]] = symbols[symbolIndex];
 	}
 }
 
 void printBoard(char** board, unsigned size)
 {
-	cout << endl;
-	cout << "  ";
-	for (unsigned i = 0; i < size; i++)
+	std::cout << std::endl;
+	std::cout << "  ";
+	for (unsigned column = 0; column < size; column++)
 	{
-		cout << i << " ";
+		std::cout << column << " ";
 	}
-	cout << endl;
-	for (unsigned i = 0; i < size; i++)
+	std::cout << std::endl;
+	for (unsigned row = 0; row < size; row++)
 	{
-		cout << i << " ";
-		for (unsigned j = 0; j < size; j++)
+		std::cout << row << " ";
+		for (unsigned column = 0; column < size; column++)
 		{
-			cout << board[i][j] << " ";
+			std::cout << board[row][column] << " ";
 		}
-		cout << endl;
+		std::cout << std::endl;
 	}
-	cout << endl;
+	std::cout << std::endl;
 }
 
 void clearCell(char** board, char symbol, unsigned size)
 {
-	for (unsigned i = 0; i < size; i++)
+	for (unsigned row = 0; row < size; row++)
 	{
-		for (unsigned j = 0; j < size; j++)
+		for (unsigned column = 0; column < size; column++)
 		{
-			if (board[i][j] == symbol)
+			if (board[row][column] == symbol)
 			{
-				board[i][j] = '-';
+				board[row][column] = '-';
 				return;
 			}
 		}
@@ -428,7 +449,8 @@ bool randomMove(char** board, unsigned size, unsigned row, unsigned column)
 void computerMove(char** board, unsigned size, unsigned& eliminated)
 {
 	const char computerKing = 'K';
-	int kingPosition[2];
+	const unsigned arraySize = 2;
+	int kingPosition[arraySize];
 	findSymbolPosition(board, computerKing, size, kingPosition);
 	unsigned kingRow = kingPosition[0];
 	unsigned kingColumn = kingPosition[1];
@@ -464,7 +486,8 @@ bool isValidMove(char** board, unsigned size, char symbolToMove, unsigned row, u
 		return false;
 	}
 
-	int symbolPosition[2];
+	const unsigned arraySize = 2;
+	int symbolPosition[arraySize];
 	findSymbolPosition(board, symbolToMove, size, symbolPosition);
 	unsigned symbolRow = symbolPosition[0];
 	unsigned symbolColumn = symbolPosition[1];
@@ -478,12 +501,12 @@ bool isValidMove(char** board, unsigned size, char symbolToMove, unsigned row, u
 	}
 }
 
-void startGame(char** board, unsigned size, const char* symbols, unsigned& moves)
+void startGame(char** board, unsigned size, const char* symbols, unsigned moves)
 {
-	cout << "K - Computer King" << endl;
-	cout << "P - Your King" << endl;
-	cout << "1 - Your First Top" << endl;
-	cout << "2 - Your Second Top" << endl;
+	std::cout << "K - Computer King" << std::endl;
+	std::cout << "P - Your King" << std::endl;
+	std::cout << "1 - Your First Top" << std::endl;
+	std::cout << "2 - Your Second Top" << std::endl;
 	placeFigures(board, size, symbols);
 	while (isCheckMate(board, size))
 	{
@@ -493,44 +516,50 @@ void startGame(char** board, unsigned size, const char* symbols, unsigned& moves
 	unsigned eliminated = 0;
 	do
 	{
-		cout << "Computer's turn:";
+		std::cout << "Computer's turn:";
 		computerMove(board, size, eliminated);
+		sleep_for(nanoseconds(10));
+		sleep_until(system_clock::now() + seconds(2));
 		printBoard(board, size);
 		if (eliminated == 2)
 		{
-			cout << "Draw";
+			std::cout << "Draw" << std::endl;
 			return;
 		}
 		char symbolToMove;
 		unsigned row, column;
-		cout << "Your turn:" << endl;
-		cout << "Enter symbol to move: ";
-		cin >> symbolToMove;
+		std::cout << "Your turn:" << std::endl;
+		std::cout << "Enter symbol to move: ";
+		std::cin >> symbolToMove;
 		while (symbolToMove != 'P' && symbolToMove != '1' && symbolToMove != '2')
 		{
-			cout << "Invalid symbol to move!" << endl;
-			cout << "Enter new symbol to move: ";
-			cin >> symbolToMove;
+			std::cout << "Invalid symbol to move!" << std::endl;
+			std::cout << "Enter new symbol to move: ";
+			std::cin >> symbolToMove;
 		}
-		cout << "Enter row: ";
-		cin >> row;
-		cout << "Enter column: ";
-		cin >> column;
+		std::cout << "Enter row: ";
+		std::cin >> row;
+		std::cout << "Enter column: ";
+		std::cin >> column;
 		while (!isValidMove(board, size, symbolToMove, row, column))
 		{
-			cout << "Invalid coordinates!" << endl;
-			cout << "Enter new row: ";
-			cin >> row;
-			cout << "Enter new column: ";
+			std::cout << "Invalid coordinates!" << std::endl;
+			std::cout << "Enter new row: ";
+			std::cin >> row;
+			std::cout << "Enter new column: ";
+			std::cin >> column;
 		}
 		clearCell(board, symbolToMove, size);
 		board[row][column] = symbolToMove;
 		moves++;
 		printBoard(board, size);
 	} while (!isCheckMate(board, size));
-
-	cout << "CheckMate" << endl;
-	cout << "Congratulations, you won!" << endl;
+	moves++;
+	std::cout << "CheckMate" << std::endl;
+	std::cout << "Congratulations, you won!" << std::endl; sleep_for(nanoseconds(10));
+	sleep_until(system_clock::now() + seconds(1));
+	std::cout << "Moves: " << moves << std::endl;
+	printMenu();
 }
 
 int main()
@@ -538,29 +567,38 @@ int main()
 	int command;
 	unsigned size = 8;
 	printMenu();
-	cin >> command;
+	std::cin >> command;
 	const char symbols[] = { 'P', 'K', '1', '2' };
 	char** board = new char* [size];
-	unsigned moves = 0;
 	while (!(command >= 1 && command <= 3))
 	{
-		cout << "Invalid command!" << endl;
-		cout << "Enter new command: ";
-		cin >> command;
+		std::cout << "Invalid command!" << std::endl;
+		std::cout << "Enter new command: ";
+		std::cin >> command;
 	}
 
-	switch (command)
+	while (command != 3)
 	{
-	case 1:
-		startGame(board, size, symbols, moves);
-		break;
-	case 2:
-		cout << "New size should be nxn!" << endl;
-		cout << "Enter new size: n = ";
-		cin >> size;
-		startGame(board, size, symbols, moves);
-		break;
-	case 3: return 0;
+		switch (command)
+		{
+		case 1:
+			startGame(board, size, symbols, 0);
+			break;
+		case 2:
+			std::cout << "New size should be nxn!" << std::endl;
+			std::cout << "Enter new size: n = ";
+			std::cin >> size;
+			startGame(board, size, symbols, 0);
+			break;
+		default: std::cout << "Invalid command!" << std::endl;
+			std::cout << "Enter new command: "; break;
+		}
+		std::cin >> command;
 	}
-	cout << "Moves: " << moves;
+
+	for (unsigned row = 0; row < size; row++)
+	{
+		delete[] board[row];
+	}
+	delete[] board;
 }
