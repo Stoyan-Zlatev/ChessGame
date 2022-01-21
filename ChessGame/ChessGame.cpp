@@ -287,6 +287,56 @@ bool isValidKingMove(char** board, unsigned size, unsigned currentRow,
 	return false;
 }
 
+bool isFreeColumn(char** board, unsigned symbolRow, unsigned symbolColumn ,unsigned row, unsigned column)
+{
+	if (symbolColumn < column)
+	{
+		for (unsigned tempColumn = symbolColumn + 1; tempColumn <= column; tempColumn++)
+		{
+			if (board[symbolRow][tempColumn] != emptyCell)
+			{
+				return false;
+			}
+		}
+	}
+	else
+	{
+		for (unsigned tempColumn = symbolColumn - 1; tempColumn >= column; tempColumn--)
+		{
+			if (board[symbolRow][tempColumn] != emptyCell)
+			{
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+bool isFreeRow(char** board, unsigned symbolRow, unsigned symbolColumn, unsigned row, unsigned column)
+{
+	if (symbolRow < row)
+	{
+		for (unsigned tempRow = symbolRow + 1; tempRow <= row; tempRow++)
+		{
+			if (board[tempRow][symbolColumn] != emptyCell)
+			{
+				return false;
+			}
+		}
+	}
+	else
+	{
+		for (unsigned tempRow = symbolRow - 1; tempRow >= row; tempRow--)
+		{
+			if (board[tempRow][symbolColumn] != emptyCell)
+			{
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
 bool isValidMove(char** board, unsigned size, char symbolToMove, unsigned row, unsigned column)
 {
 	if ((row < 0 || row >= size || column < 0 || column >= size) || board[row][column] != emptyCell)
@@ -304,8 +354,16 @@ bool isValidMove(char** board, unsigned size, char symbolToMove, unsigned row, u
 	}
 	else
 	{
-		return row == symbolRow || column == symbolColumn;
+		if (row == symbolRow)
+		{
+			return isFreeColumn(board, symbolRow, symbolColumn, row, column);
+		}
+		else if (column == symbolColumn)
+		{
+			return isFreeRow(board, symbolRow, symbolColumn, row, column);
+		}
 	}
+	return false;
 }
 
 void startGame(char** board, unsigned size, const char* symbols, unsigned moves)
