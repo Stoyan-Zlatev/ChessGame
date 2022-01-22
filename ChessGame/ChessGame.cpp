@@ -301,7 +301,7 @@ bool isFreeColumn(char** board, unsigned symbolRow, unsigned symbolColumn ,unsig
 	}
 	else
 	{
-		for (unsigned tempColumn = symbolColumn - 1; tempColumn >= column; tempColumn--)
+		for (int tempColumn = symbolColumn - 1; tempColumn > column; tempColumn--)
 		{
 			if (board[symbolRow][tempColumn] != emptyCell)
 			{
@@ -326,7 +326,7 @@ bool isFreeRow(char** board, unsigned symbolRow, unsigned symbolColumn, unsigned
 	}
 	else
 	{
-		for (unsigned tempRow = symbolRow - 1; tempRow >= row; tempRow--)
+		for (int tempRow = symbolRow - 1; tempRow > row; tempRow--)
 		{
 			if (board[tempRow][symbolColumn] != emptyCell)
 			{
