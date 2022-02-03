@@ -1,4 +1,4 @@
-﻿/**
+/**
 *
 * Solution to course project # 4
 * Introduction to programming course
@@ -22,15 +22,15 @@
 using namespace std::this_thread;
 using namespace std::chrono;
 
-const unsigned coordinatesArraySize = 2;
-const int combinationsCount = 8;
-const int rowDimensions[] = { 0, 0,-1, 1,-1,-1, 1, 1 };
-const int columnDimensions[] = { 1,-1, 0, 0, 1,-1, 1, -1 };
-const char emptyCell = '-';
-const char computerKingSymbol = 'K';
-const char myKingSymbol = 'P';
-const char firstTop = '1';
-const char secondTop = '2';
+const unsigned CoordinatesArraySize = 2;
+const int CombinationsCount = 8;
+const int RowDimensions[] = { 0, 0,-1, 1,-1,-1, 1, 1 };
+const int ColumnDimensions[] = { 1,-1, 0, 0, 1,-1, 1, -1 };
+const char EmptyCell = '-';
+const char ComputerKingSymbol = 'K';
+const char MyKingSymbol = 'P';
+const char FirstTop = '1';
+const char SecondTop = '2';
 
 void printMenu()
 {
@@ -47,7 +47,7 @@ void createEmptyBoard(char** board, unsigned size)
 		board[row] = new char[size];
 		for (unsigned column = 0; column < size; column++)
 		{
-			board[row][column] = emptyCell;
+			board[row][column] = EmptyCell;
 		}
 	}
 }
@@ -63,10 +63,10 @@ void generatePositions(int* positions, unsigned size)
 
 bool kingTrap(char** board, unsigned row, unsigned column, unsigned size, char kingSymbol)
 {
-	for (unsigned i = 0; i < combinationsCount; i++)
+	for (unsigned i = 0; i < CombinationsCount; i++)
 	{
-		int newRow = row + rowDimensions[i];
-		int newColumn = column + columnDimensions[i];
+		int newRow = row + RowDimensions[i];
+		int newColumn = column + ColumnDimensions[i];
 		if (newRow >= 0 && newRow < size && newColumn >= 0 && newColumn < size)
 		{
 			if (board[newRow][newColumn] == kingSymbol)
@@ -82,13 +82,13 @@ bool kingTrap(char** board, unsigned row, unsigned column, unsigned size, char k
 void placeFigures(char** board, unsigned size, const char* symbols)
 {
 	createEmptyBoard(board, size);
-	int positions[coordinatesArraySize];
+	int positions[CoordinatesArraySize];
 	const unsigned symbolsCount = 4;
 
 	for (unsigned symbolIndex = 0; symbolIndex < symbolsCount; symbolIndex++)
 	{
 		generatePositions(positions, size);
-		while (board[positions[0]][positions[1]] != emptyCell || (symbolIndex == 1 && kingTrap(board, positions[0], positions[1], size, myKingSymbol)))
+		while (board[positions[0]][positions[1]] != EmptyCell || (symbolIndex == 1 && kingTrap(board, positions[0], positions[1], size, MyKingSymbol)))
 		{
 			generatePositions(positions, size);
 		}
@@ -117,7 +117,7 @@ bool topRowTrap(char** board, unsigned row, unsigned column, unsigned size)
 {
 	for (unsigned currentColumn = 0; currentColumn < size; currentColumn++)
 	{
-		if (currentColumn != column && (board[row][currentColumn] == firstTop || board[row][currentColumn] == secondTop))
+		if (currentColumn != column && (board[row][currentColumn] == FirstTop || board[row][currentColumn] == SecondTop))
 		{
 			return true;
 		}
@@ -129,7 +129,7 @@ bool topColumnTrap(char** board, unsigned row, unsigned column, unsigned size)
 {
 	for (unsigned currentRow = 0; currentRow < size; currentRow++)
 	{
-		if (currentRow != row && (board[currentRow][column] == firstTop || board[currentRow][column] == secondTop))
+		if (currentRow != row && (board[currentRow][column] == FirstTop || board[currentRow][column] == SecondTop))
 		{
 			return true;
 		}
@@ -139,7 +139,7 @@ bool topColumnTrap(char** board, unsigned row, unsigned column, unsigned size)
 
 bool trapped(char** board, unsigned row, unsigned column, unsigned size)
 {
-	if (kingTrap(board, row, column, size, myKingSymbol) || topColumnTrap(board, row, column, size) || topRowTrap(board, row, column, size))
+	if (kingTrap(board, row, column, size, MyKingSymbol) || topColumnTrap(board, row, column, size) || topRowTrap(board, row, column, size))
 	{
 		return true;
 	}
@@ -148,10 +148,10 @@ bool trapped(char** board, unsigned row, unsigned column, unsigned size)
 
 bool possibleComputerKingMoves(char** board, unsigned row, unsigned column, unsigned size)
 {
-	for (unsigned i = 0; i < combinationsCount; i++)
+	for (unsigned i = 0; i < CombinationsCount; i++)
 	{
-		int newRow = row + rowDimensions[i];
-		int newColumn = column + columnDimensions[i];
+		int newRow = row + RowDimensions[i];
+		int newColumn = column + ColumnDimensions[i];
 		if (newRow >= 0 && newRow < size && newColumn >= 0 && newColumn < size)
 		{
 			if (!trapped(board, newRow, newColumn, size))
@@ -166,8 +166,8 @@ bool possibleComputerKingMoves(char** board, unsigned row, unsigned column, unsi
 
 bool isCheckMate(char** board, unsigned size)
 {
-	int kingPosition[coordinatesArraySize];
-	findSymbolPosition(board, computerKingSymbol, size, kingPosition);
+	int kingPosition[CoordinatesArraySize];
+	findSymbolPosition(board, ComputerKingSymbol, size, kingPosition);
 	int kingRow = kingPosition[0];
 	int kingColumn = kingPosition[1];
 	if (!possibleComputerKingMoves(board, kingRow, kingColumn, size))
@@ -211,7 +211,7 @@ void clearCell(char** board, char symbol, unsigned size)
 		{
 			if (board[row][column] == symbol)
 			{
-				board[row][column] = emptyCell;
+				board[row][column] = EmptyCell;
 				return;
 			}
 		}
@@ -220,15 +220,15 @@ void clearCell(char** board, char symbol, unsigned size)
 
 bool canEliminate(char** board, unsigned size, unsigned row, unsigned column)
 {
-	for (unsigned i = 0; i < combinationsCount; i++)
+	for (unsigned i = 0; i < CombinationsCount; i++)
 	{
-		int newRow = row + rowDimensions[i];
-		int newColumn = column + columnDimensions[i];
+		int newRow = row + RowDimensions[i];
+		int newColumn = column + ColumnDimensions[i];
 		if (newRow >= 0 && newRow < size && newColumn >= 0 && newColumn < size)
 		{
-			if ((board[newRow][newColumn] == firstTop || board[newRow][newColumn] == secondTop) && !trapped(board, newRow, newColumn, size))
+			if ((board[newRow][newColumn] == FirstTop || board[newRow][newColumn] == SecondTop) && !trapped(board, newRow, newColumn, size))
 			{
-				board[newRow][newColumn] = computerKingSymbol;
+				board[newRow][newColumn] = ComputerKingSymbol;
 				return true;
 			}
 		}
@@ -239,15 +239,15 @@ bool canEliminate(char** board, unsigned size, unsigned row, unsigned column)
 
 bool randomMove(char** board, unsigned size, unsigned row, unsigned column)
 {
-	for (unsigned i = 0; i < combinationsCount; i++)
+	for (unsigned i = 0; i < CombinationsCount; i++)
 	{
-		int newRow = row + rowDimensions[i];
-		int newColumn = column + columnDimensions[i];
+		int newRow = row + RowDimensions[i];
+		int newColumn = column + ColumnDimensions[i];
 		if (newRow >= 0 && newRow < size && newColumn >= 0 && newColumn < size)
 		{
-			if (board[newRow][newColumn] == '-' && !trapped(board, newRow, newColumn, size))
+			if (board[newRow][newColumn] == EmptyCell && !trapped(board, newRow, newColumn, size))
 			{
-				board[newRow][newColumn] = computerKingSymbol;
+				board[newRow][newColumn] = ComputerKingSymbol;
 				return true;
 			}
 		}
@@ -258,18 +258,18 @@ bool randomMove(char** board, unsigned size, unsigned row, unsigned column)
 
 void computerMove(char** board, unsigned size, unsigned& eliminated)
 {
-	int kingPosition[coordinatesArraySize];
-	findSymbolPosition(board, computerKingSymbol, size, kingPosition);
+	int kingPosition[CoordinatesArraySize];
+	findSymbolPosition(board, ComputerKingSymbol, size, kingPosition);
 	unsigned kingRow = kingPosition[0];
 	unsigned kingColumn = kingPosition[1];
 	if (canEliminate(board, size, kingRow, kingColumn))
 	{
 		eliminated++;
-		board[kingRow][kingColumn] = emptyCell;
+		board[kingRow][kingColumn] = EmptyCell;
 	}
 	else if (randomMove(board, size, kingRow, kingColumn))
 	{
-		board[kingRow][kingColumn] = emptyCell;
+		board[kingRow][kingColumn] = EmptyCell;
 	}
 }
 
@@ -279,7 +279,7 @@ bool isValidKingMove(char** board, unsigned size, unsigned currentRow,
 	int rowMoves = currentRow - newRow;
 	int columnMoves = currentColumn - newColumn;
 
-	if (abs(rowMoves) <= 1 && abs(columnMoves) <= 1 && !kingTrap(board, newRow, newColumn, size, computerKingSymbol))
+	if (abs(rowMoves) <= 1 && abs(columnMoves) <= 1 && !kingTrap(board, newRow, newColumn, size, ComputerKingSymbol))
 	{
 		return true;
 	}
@@ -287,13 +287,13 @@ bool isValidKingMove(char** board, unsigned size, unsigned currentRow,
 	return false;
 }
 
-bool isFreeColumn(char** board, unsigned symbolRow, unsigned symbolColumn ,unsigned row, unsigned column)
+bool isFreeColumn(char** board, unsigned symbolRow, unsigned symbolColumn, unsigned row, unsigned column)
 {
 	if (symbolColumn < column)
 	{
 		for (unsigned tempColumn = symbolColumn + 1; tempColumn <= column; tempColumn++)
 		{
-			if (board[symbolRow][tempColumn] != emptyCell)
+			if (board[symbolRow][tempColumn] != EmptyCell)
 			{
 				return false;
 			}
@@ -303,7 +303,7 @@ bool isFreeColumn(char** board, unsigned symbolRow, unsigned symbolColumn ,unsig
 	{
 		for (int tempColumn = symbolColumn - 1; tempColumn > column; tempColumn--)
 		{
-			if (board[symbolRow][tempColumn] != emptyCell)
+			if (board[symbolRow][tempColumn] != EmptyCell)
 			{
 				return false;
 			}
@@ -318,7 +318,7 @@ bool isFreeRow(char** board, unsigned symbolRow, unsigned symbolColumn, unsigned
 	{
 		for (unsigned tempRow = symbolRow + 1; tempRow <= row; tempRow++)
 		{
-			if (board[tempRow][symbolColumn] != emptyCell)
+			if (board[tempRow][symbolColumn] != EmptyCell)
 			{
 				return false;
 			}
@@ -328,7 +328,7 @@ bool isFreeRow(char** board, unsigned symbolRow, unsigned symbolColumn, unsigned
 	{
 		for (int tempRow = symbolRow - 1; tempRow > row; tempRow--)
 		{
-			if (board[tempRow][symbolColumn] != emptyCell)
+			if (board[tempRow][symbolColumn] != EmptyCell)
 			{
 				return false;
 			}
@@ -339,16 +339,16 @@ bool isFreeRow(char** board, unsigned symbolRow, unsigned symbolColumn, unsigned
 
 bool isValidMove(char** board, unsigned size, char symbolToMove, unsigned row, unsigned column)
 {
-	if ((row < 0 || row >= size || column < 0 || column >= size) || board[row][column] != emptyCell)
+	if ((row < 0 || row >= size || column < 0 || column >= size) || board[row][column] != EmptyCell)
 	{
 		return false;
 	}
 
-	int symbolPosition[coordinatesArraySize];
+	int symbolPosition[CoordinatesArraySize];
 	findSymbolPosition(board, symbolToMove, size, symbolPosition);
 	unsigned symbolRow = symbolPosition[0];
 	unsigned symbolColumn = symbolPosition[1];
-	if (symbolToMove == myKingSymbol)
+	if (symbolToMove == MyKingSymbol)
 	{
 		return isValidKingMove(board, size, symbolRow, symbolColumn, row, column);
 	}
@@ -397,7 +397,7 @@ void startGame(char** board, unsigned size, const char* symbols, unsigned moves)
 		std::cout << "Your turn:" << std::endl;
 		std::cout << "Enter symbol to move: ";
 		std::cin >> symbolToMove;
-		while (symbolToMove != myKingSymbol && symbolToMove != firstTop && symbolToMove != secondTop)
+		while (symbolToMove != MyKingSymbol && symbolToMove != FirstTop && symbolToMove != SecondTop)
 		{
 			std::cout << "Invalid symbol to move!" << std::endl;
 			std::cout << "Enter new symbol to move: ";
@@ -446,7 +446,7 @@ int main()
 	unsigned size = 8;
 	printMenu();
 	std::cin >> command;
-	const char symbols[] = { 'P', 'K', '1', '2' };
+	const char symbols[] = { MyKingSymbol, ComputerKingSymbol, FirstTop, SecondTop };
 	char** board = new char* [size];
 
 	const int start = 1;
@@ -489,5 +489,6 @@ int main()
 	{
 		delete[] board[row];
 	}
+
 	delete[] board;
 }
